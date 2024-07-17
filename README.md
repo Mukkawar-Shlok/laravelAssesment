@@ -80,3 +80,15 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
    ![image](https://github.com/user-attachments/assets/d99840ff-1130-4b4f-a0b1-9f0dafe8990b)
 5. **Access your application** through the server IP.
 6. **Success!** Your Laravel application is now deployed.
+
+## Setting enviorment on forge
+You can add your enviorment inside enviorment tab of your server on forge but as most of the services like MySql, Redis comes with it you don't need to add remote redis or database but if your requirement says otherwise you can always go there and change it.
+![image](https://github.com/user-attachments/assets/046ce6c4-3991-490e-85f8-079eb9575674)
+
+## Checking logs of laravel on forge
+ you can go into logs tab to check the logs and errors of the server.
+ ![image](https://github.com/user-attachments/assets/0362bdd1-5f22-4f34-a88f-e84ddb30746b)
+
+
+ 
+
