@@ -11,6 +11,73 @@
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
+### Prerequisites
+- PHP 8.0 or higher
+- Composer
+- Redis
+- MySQL (via XAMPP or standalone)
+- Node.js and npm 
+
+### Installation Steps
+1. Clone the repository
+```bash
+git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
+```
+2. Environment Configuration
+    - Copy .env.example to .env.
+    - Update .env with your database and Redis configurations
+3. Install PHP dependencies
+    ```bash
+    composer install
+    ```
+4. Install Node.js dependencies
+   ```bash
+   npm install
+   ```
+5. Run database migrations
+   ```bash
+   php artisan migrate
+    ```
+### Running the Application
+1. Start the Laravel development server
+    ```bash
+    php artisan serve
+    ```
+2. In a separate terminal, run the scheduler
+    ```bash
+    php artisan schedule:run
+    ```
+## Routes
+
+| Method | URI | Description |
+|--------|-----|-------------|
+| GET | `/` | Returns the landing page of Laravel to check if Laravel is running correctly. |
+| GET | `/reliance/price` | Fetches data directly from the database (for testing database functionality). |
+| GET | `/reliance/redis/price` | Retrieves Reliance stock price from Redis cache if available, otherwise from the database. |
+| GET | `/reliance_stock/history/{interval}/{from_date}/{to_date}` | Returns historical stock data based on specified parameters. |
+| GET | `/clear_redis_cache` | Clears the Redis cache. |
+
+### Notes on `/reliance_stock/history/{interval}/{from_date}/{to_date}`
+
+- `{interval}`: Required parameter. Valid values are:
+  - 1m, 2m, 5m, 15m, 30m, 60m, 90m (minutes)
+  - 1h (hour)
+  - 1d, 5d (days)
+  - 1wk (week)
+  - 1mo, 3mo (months)
+- `{from_date}` and `{to_date}`: Should be in the format YYYY-MM-DD
+
+This endpoint attempts to retrieve data in the following order:
+1. From Redis cache (if available)
+2. From the database (if not in cache)
+3. From the external API (if not in database)
+
+
+### Additional Notes
+- This project doesn't utilize Vue.js or React, so the Node.js dependencies are optional.
+- Make sure to configure your database settings in the .env file before running migrations.
+- For any issues or questions, please open an issue in the GitHub repository.
+
 ## Deployment On Forge with AWS EC2
 
 ### Step 1: Sign Up and Connect to GitHub
@@ -88,7 +155,5 @@ You can add your enviorment inside enviorment tab of your server on forge but as
 ## Checking logs of laravel on forge
  you can go into logs tab to check the logs and errors of the server.
  ![image](https://github.com/user-attachments/assets/0362bdd1-5f22-4f34-a88f-e84ddb30746b)
-
-
  
 
