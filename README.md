@@ -11,79 +11,72 @@
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
+## Deployment On Forge with AWS EC2
 
-## Deployment On Forge with AwsEC2
-* Sign up for an account on Forge.
-* Connect your Forge account with GitHub.(Authorize github to connect with your repository)
-  ![Connect with GitHub](https://github.com/user-attachments/assets/11e406f5-b7b2-47d2-b231-3503272f7f1b)
-* Select your service provider(I will be using Aws)
-  ![image](https://github.com/user-attachments/assets/edf4f84b-85c2-48f0-acb9-f0e6cc45bed6)
-* From here on there will be instructions for aws ec2 settings for other provides you can take a look in to this [documentation](https://forge.laravel.com/docs/servers/providers.html)
-* Now go to IAM dashboard of Aws.
-  ![image](https://github.com/user-attachments/assets/887604ab-8fb8-4392-bdd3-24a8c179366e)
-* Go inside users.
-  ![image](https://github.com/user-attachments/assets/8c576821-0993-444e-b98e-78f963dbede1)
-* Click on add a new user for this project.
-* For giving required policies as explained in document the application AmazonEC2FullAccess and AmazonVPCFullAccess, we need to create a group which have this two policies.
-* Or you could apply those polices to that user directly by choosing attach policies directly.
-  ![image](https://github.com/user-attachments/assets/d0dcc512-fc5f-41d1-a805-02a6bdbd9027)
-* The permission summary should look like this if you apply that directly.
-  ![image](https://github.com/user-attachments/assets/a36ede48-f357-4b67-a948-b7cfbf4467f9)
-* Now review and create the user.
-* Now go inside the user for creating aws key and aws secret for connecting them.
-* Go inside the security credentials tab and click on create access key.
-![image](https://github.com/user-attachments/assets/d0112d9b-deb8-4c0d-9a13-b22a3b3649fd)
-* Select third party services as forge is a third party service.
- ![image](https://github.com/user-attachments/assets/f963fe16-b0f2-4afc-9342-cd6d9c632efe)
-* After clicking on create access key you will be prompted access key and access secret store it and also download its .csv file.
-* Now Paste your access key and secret key on forge.
- ![image](https://github.com/user-attachments/assets/f4dd3945-c27a-4310-bdcb-aa61b19c0254)
-* You can start a free trial or you could subscribe for monthly and yearly package.
-* After filling billing details you will have option of create a new server.
- ![image](https://github.com/user-attachments/assets/9bdbf661-230f-4dc1-91a3-449cce264793)
-* Now click on create server and select Aws.
-* After that fill details like CPU, RAM, Region, PHP version, MySql Version, Server OS, Database Name, etc.
-* You will get a popup which contains the server credentials Sudo password and Database Password for usage.
-* Now if you go and check Ec2 instances it will contain a instance with the server name that you just submitted.
-* Wait for status check to go green.(Normally there are 2 status checks.)
-* Now for further installation to proceed (PHP, Ngix, SQL) we need to add security group to our instance.
-* Create a security group
- ![image](https://github.com/user-attachments/assets/e0077e19-e8a4-459d-9638-f2dd44401416)
- ![image](https://github.com/user-attachments/assets/b03cd348-0425-4d00-abcb-9729f5d507ce)
-* Now add the inbound rules as shown in [documentation](https://forge.laravel.com/docs/servers/providers.html)
-  ![image](https://github.com/user-attachments/assets/6c05d098-a2da-4ea3-94d6-4343fe2ea78f)
-* Now for getting your systems ip address you can use following commands and add it in rules.
-  For windows
-  ```bash
-  nslookup -type=TXT o-o.myaddr.l.google.com ns1.google.com
-  ```
-  For Mac
-  ```bash
-  dig -4 TXT +short o-o.myaddr.l.google.com @nsl.google.com
-  ```
-* Go inside instances and change the default security group that you created with new security group.
-* After updating security group forge will start installing dependencies required to run the laravel project.
-* Now you will be able to see that your site is deployed and if you go to that server address you will get a forge landing page.
- ![image](https://github.com/user-attachments/assets/b04dcd81-9b93-41a1-a38d-0a2e446851cd)
- ![image](https://github.com/user-attachments/assets/77853f7f-09ac-4f55-b690-91d7bcfda13e)
-* Now click on site and you will be able to see install application option.
- ![image](https://github.com/user-attachments/assets/92ca94ab-bd1c-40d8-8b6d-6dc90b3a1179)
-* Now  connect it with git repository.
-* Paste repositiory link and select branch of repository.(click on install composer dependencies)
- ![image](https://github.com/user-attachments/assets/330b277c-601f-4f62-b045-04b1c0f54cc6)
-* Now if you want to deploy your application every time there is new commit i.e you want to set up a CI/CD pipeline select enable quick deploy.
- ![image](https://github.com/user-attachments/assets/d99840ff-1130-4b4f-a0b1-9f0dafe8990b)
-* Now if you go to the server ip you can access your application.
-* Success!.
-  
-  
+### Step 1: Sign Up and Connect to GitHub
 
+1. **Sign up for an account on Forge.**
+2. **Connect your Forge account with GitHub.** Authorize GitHub to connect with your repository.
+   ![Connect with GitHub](https://github.com/user-attachments/assets/11e406f5-b7b2-47d2-b231-3503272f7f1b)
 
+### Step 2: Select Service Provider
 
-  
+1. **Select your service provider** (e.g., AWS).
+   ![image](https://github.com/user-attachments/assets/edf4f84b-85c2-48f0-acb9-f0e6cc45bed6)
+2. **Follow the instructions** for AWS EC2 settings. For other providers, refer to the [documentation](https://forge.laravel.com/docs/servers/providers.html).
 
+### Step 3: Set Up AWS IAM User
 
-5.Connect your aws account with forge for deployment.
-## Configurations of 
+1. **Go to the IAM dashboard** of AWS.
+   ![image](https://github.com/user-attachments/assets/887604ab-8fb8-4392-bdd3-24a8c179366e)
+2. **Create a new user** for this project.
+   ![image](https://github.com/user-attachments/assets/8c576821-0993-444e-b98e-78f963dbede1)
+3. **Assign necessary policies**: AmazonEC2FullAccess and AmazonVPCFullAccess. Create a group with these policies or attach them directly to the user.
+   ![image](https://github.com/user-attachments/assets/d0dcc512-fc5f-41d1-a805-02a6bdbd9027)
+4. **Create access keys** for connecting to Forge.
+   ![image](https://github.com/user-attachments/assets/d0112d9b-deb8-4c0d-9a13-b22a3b3649fd)
+5. **Select third-party services** and store the access key and secret key.
+   ![image](https://github.com/user-attachments/assets/f963fe16-b0f2-4afc-9342-cd6d9c632efe)
+6. **Paste the keys** into Forge.
+  ![image](https://github.com/user-attachments/assets/28bd2b27-c3d5-4c64-a404-58d12b8f2a77)
+### Step 4: Create and Configure Server
 
+1. **Start a free trial** or subscribe to a package.
+2. **Create a new server** and select AWS.
+   ![image](https://github.com/user-attachments/assets/9bdbf661-230f-4dc1-91a3-449cce264793)
+3. **Fill in the details**: CPU, RAM, Region, PHP version, MySQL version, Server OS, Database Name, etc.
+4. **Copy server credentials**: Sudo password and Database Password.
+5. **Check the EC2 instance** for the new server.
+6. **Wait for status checks** to turn green (usually two status checks).
+7. **Add security group** to the instance.
+   ![image](https://github.com/user-attachments/assets/e0077e19-e8a4-459d-9638-f2dd44401416)
+8. **Add inbound rules** as shown in the [documentation](https://forge.laravel.com/docs/servers/providers.html).
+   ![image](https://github.com/user-attachments/assets/6c05d098-a2da-4ea3-94d6-4343fe2ea78f)
+9. **Get your system's IP address**:
+   - For Windows:
+     ```bash
+     nslookup -type=TXT o-o.myaddr.l.google.com ns1.google.com
+     ```
+   - For Mac:
+     ```bash
+     dig -4 TXT +short o-o.myaddr.l.google.com @nsl.google.com
+     ```
+10. **Update the security group** with the new security group.
+11. **Forge will install dependencies** required to run the Laravel project.
 
+### Step 5: Deploy Your Application
+
+1. **Access the server address** to see the Forge landing page.
+   ![image](https://github.com/user-attachments/assets/b04dcd81-9b93-41a1-a38d-0a2e446851cd)
+2. **Install the application**:
+  ![image](https://github.com/user-attachments/assets/c4051bf3-5579-4770-bbf9-23bf882059e2)
+3. **Connect to your Git repository**:
+   - Paste the repository link.
+   - Select the branch of the repository.
+   - Enable "Install Composer dependencies."
+   ![image](https://github.com/user-attachments/assets/330b277c-601f-4f62-b045-04b1c0f54cc6)
+4. **Set up CI/CD pipeline**:
+   - Enable quick deploy to deploy your application automatically on new commits.
+   ![image](https://github.com/user-attachments/assets/d99840ff-1130-4b4f-a0b1-9f0dafe8990b)
+5. **Access your application** through the server IP.
+6. **Success!** Your Laravel application is now deployed.
