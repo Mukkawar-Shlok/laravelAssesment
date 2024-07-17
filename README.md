@@ -63,6 +63,18 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
   ```
 * Go inside instances and change the default security group that you created with new security group.
 * After updating security group forge will start installing dependencies required to run the laravel project.
+* Now you will be able to see that your site is deployed and if you go to that server address you will get a forge landing page.
+ ![image](https://github.com/user-attachments/assets/b04dcd81-9b93-41a1-a38d-0a2e446851cd)
+ ![image](https://github.com/user-attachments/assets/77853f7f-09ac-4f55-b690-91d7bcfda13e)
+* Now click on site and you will be able to see install application option.
+ ![image](https://github.com/user-attachments/assets/92ca94ab-bd1c-40d8-8b6d-6dc90b3a1179)
+* Now  connect it with git repository.
+* Paste repositiory link and select branch of repository.(click on install composer dependencies)
+ ![image](https://github.com/user-attachments/assets/330b277c-601f-4f62-b045-04b1c0f54cc6)
+* Now if you want to deploy your application every time there is new commit i.e you want to set up a CI/CD pipeline select enable quick deploy.
+ ![image](https://github.com/user-attachments/assets/d99840ff-1130-4b4f-a0b1-9f0dafe8990b)
+* Now if you go to the server ip you can access your application.
+* Success!.
   
   
 
