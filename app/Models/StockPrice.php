@@ -14,4 +14,9 @@ class StockPrice extends Model
     protected $fillable = [
         'price',
     ];
+
+    public function historyStocks()
+    {
+        return $this->hasMany(HistoryStock::class);
+    }
 }

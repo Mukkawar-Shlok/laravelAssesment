@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\StockPrice;
+use App\Models\HistoryStock;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 
@@ -16,76 +17,181 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    //sample function to check if the server is running properly
     return view('welcome');
 });
 
+
+//api only for fetching from DB
 Route::get('/reliance/price', function () {
-    $stockPriceInstance = StockPrice::where('id',1)->first();
-    
-    if( $stockPriceInstance ){
-    
-        return response()->json([
-            'message' => 'Data retrieved successfully',
-            'data' => json_decode($stockPriceInstance)
-        ]);
-
-    }else{
-        
-        return response()->json(['message'=> 'Failed to fetch data'],404);
-    
-    }
-});
-
-Route::get('/test-redis', function () {
-    $key = 'relianceStock';
-    $value = Redis::get($key);
-    print_r( json_decode($value));
-    
-    if( $value != null ){
-        //data from redis
-        return response()->json([
-            "message"=>"Price load successfull.",
-            "price"=> $value,
-            'origin'=>"redis"
-        ]);
-
-    }else{
-        //$value not found in redis
+    //asumming only one stock exists that is reliance
+    //in case of multiple stocks we can just pass id in url and use it.
+    try{
+        //fetching stock instance 
         $stockPriceInstance = StockPrice::where('id',1)->first();
-        // print_r($stockPriceInstance);
-        if ($stockPriceInstance) {
-            // Assuming $stockPriceInstance->price is a string representation of a price
-            $decodedPrice = $stockPriceInstance->price;
     
+        if( $stockPriceInstance ){
+            //return stockprice instance
             return response()->json([
                 'message' => 'Data retrieved successfully',
-                'price' => $decodedPrice,
-                'origin' => 'database'
+                'data' => json_decode($stockPriceInstance)
             ]);
-        } else {
-            return response()->json(['message' => 'Failed to fetch data'], 404);
+    
+        }else{
+            //failed to retrive data
+            return response()->json(['message'=> 'Failed to fetch data'],404);
+        
         }
+    }catch (\Exception $e) {
+        //in error
+        return response()->json([
+            'message' => 'Internal Server Error.',
+            'error'=>$e->getMessage()
+        ], 500);
     }
+});
 
+//api for getting reliance price from db or redis
+Route::get('/reliance/redis/price', function () {
+    try{
+        //key is set to relianceStock assuming only one stock exists
+        //in case of multiple we can just pass that in url 
+        $key = 'relianceStock';
+        //retreive the value
+        $value = Redis::get($key);
+
+        //logs for debugging
+        // print_r( json_decode($value));
+        
+        //if there is data in redis
+        if( $value != null ){
+            //data from redis
+            return response()->json([
+                "message"=>"Reliance Stock Price load successfull.",
+                "price"=> $value,
+                'origin'=>"redis"
+            ]);
+        }else{
+            //$value not found in redis
+            $stockPriceInstance = StockPrice::where('id',1)->first();
+            
+            //logs for debugging
+            // print_r($stockPriceInstance);
+            
+            if ($stockPriceInstance) {
+                // extracting price
+                $decodedPrice = $stockPriceInstance->price;
+                //returning extracted data
+                return response()->json([
+                    'message' => 'Reliance Stock Price load successfull.',
+                    'price' => $decodedPrice,
+                    'origin' => 'database'
+                ]);
+            } else {
+                //failed to fetch data
+                return response()->json(['message' => 'Failed to fetch data'], 404);
+            }
+        }
+
+    }catch(\Exception $e){
+        return response()->json([
+            'message' => 'Internal Server Error.',
+            'error' =>$e->getMessage()
+        ], 500);
+    }
 });
 
 
-use Illuminate\Support\Facades\Http;
+//api for getting history from Redis->DB->API
+Route::get('/reliance_stock/history/{interval}/{from_date}/{to_date}', function ($interval,$from_date, $to_date) {
+    try{
+        //creating key with interwal,from and to date
+    $cacheKey = "reliance_stock_history_{$interval}_{$from_date}_{$to_date}";
 
-Route::get('/reliance_stock_history/{period}/{interval}', function ($period, $interval) {
-    // Make the HTTP request to the third-party API
-    $response = Http::get("https://reliance-stock-scrapper.onrender.com/reliance_stock_history/$period/$interval");
+    //if key exists in redis
+    if (Redis::exists($cacheKey)) {
+        //retrieve data
+        $cachedResponse = Redis::get($cacheKey);
+        //return data
+        return response()->json([
+            'message' => 'Data retrieved successfully from cache',
+            'data' => json_decode($cachedResponse, true),
+            'origin'=>"redis"
+        ]);
+    }
+    
+    //checking if key exists in DB
+    $historyStock = HistoryStock::where('date_interval', $cacheKey)->first();
+    //if there is instance of data
+    if ($historyStock) {
+        // store it in redis for caching
+        Redis::setex($cacheKey, 3600, $historyStock->data);
 
-    // Check if the request was successful
+        //returning data
+        return response()->json([
+            'message' => 'Data retrieved successfully from database',
+            'data' => json_decode($historyStock->data, true),
+            'origin' => "database"
+        ]);
+    }
+
+    //now fetching from API
+    $response = Http::get("https://reliance-stock-scrapper.onrender.com/reliance_stock_history/$interval/$from_date/$to_date");
+
+    //if api response is sucessful
     if ($response->successful()) {
+        //converting data into json format
+        $responseData = $response->json();
+        //setting value in redis with 1 hour expiration
+        Redis::setex($cacheKey, 3600, json_encode($responseData));
+        //as it does not exists inside DB create instance and insert it
+        HistoryStock::insert([
+            'date_interval' => $cacheKey,
+            'data' => json_encode($responseData),
+            'stock_price_id' => 1,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        //return data
         return response()->json([
             'message' => 'Data retrieved successfully',
-            'data' => $response->json()
+            'data' => $responseData,
+            'origin'=>"API"
         ]);
     } else {
+        //failed to fetch data from api
         return response()->json([
             'error' => 'Failed to fetch data from the API.',
             'status_code' => $response->status()
         ], $response->status());
+    }
+
+    }catch (\Exception $e){
+        //internal server error
+        return response()->json([
+            'message' => 'Internal Server Error.',
+            'error'=>$e->getMessage()
+        ]);
+    }
+});
+
+
+//api for clearing out redis
+Route::get('/clear_redis_cache', function () {
+    try{
+        //clear redis
+        Redis::flushall();
+        //return response
+        return response()->json([
+            'message' => 'Redis cache cleared successfully'
+        ]);
+
+    }catch (\Exception $e){
+        //return internal server error
+        return response()->json([
+            'message' => 'Internal Server Error.',
+            'error'=>$e->getMessage()
+        ]);
     }
 });
