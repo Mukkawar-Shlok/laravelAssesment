@@ -56,7 +56,7 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
     ```
 2. In a separate terminal, run the scheduler
     ```bash
-    php artisan schedule:run
+    php artisan schedule:work
     ```
 ## Routes
 
