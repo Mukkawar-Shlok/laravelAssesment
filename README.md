@@ -7,16 +7,27 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
+### Assumption
+- You are running scheduler when you start the project which creates entry of reliance stock in database.
 ### Prerequisites
 - PHP 8.0 or higher
 - Composer
 - Redis
 - MySQL (via XAMPP or standalone)
-- Node.js and npm 
+- Node.js and npm
+- Rapid API KEY
+
+### Generate API Key
+1. Go to (rapidapi.com)[https://rapidapi.com/]
+2. Sign up with google or other sign up options.
+3. Go inside finance section.
+![image](https://github.com/user-attachments/assets/3d03f86a-90cf-455b-9c31-4410853b35c7)
+4. Select Real time finance data.
+5. Click on subscribe to test and select the plan.I am selecting free basic which has 100 requests hard limit.
+![image](https://github.com/user-attachments/assets/4a35e30e-ef49-4457-a6e1-937e15a91f34)
+6. After Selecting you will get back to previous screen and you will be able to see your key and test endpoint option.
+![Screenshot 2024-07-18 121409](https://github.com/user-attachments/assets/f686e63a-f72f-4332-8f4d-1e2fdf509e98)
+7. Now go to .env and paste it there with key **X_RapidAPI_Key**.
 
 ### Installation Steps
 1. Clone the repository
@@ -25,7 +36,7 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
 ```
 2. Environment Configuration
     - Copy .env.example to .env.
-    - Update .env with your database and Redis configurations
+    - Update .env with your database, Redis configurations and Rapid Api Key.
 3. Install PHP dependencies
     ```bash
     composer install
@@ -45,7 +56,7 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
     ```
 2. In a separate terminal, run the scheduler
     ```bash
-    php artisan schedule:run
+    php artisan schedule:work
     ```
 ## Routes
 
@@ -55,8 +66,10 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
 | GET | `/reliance/price` | Fetches data directly from the database (for testing database functionality). |
 | GET | `/reliance/redis/price` | Retrieves Reliance stock price from Redis cache if available, otherwise from the database. |
 | GET | `/reliance_stock/history/{interval}` | Returns historical stock data based on specified parameters. |
+| GET | `/reliance_stock/history/{interval}` | Returns historical stock data based on specified parameters. |
 | GET | `/clear_redis_cache` | Clears the Redis cache. |
 
+### Notes on `/reliance_stock/history/{interval}`
 ### Notes on `/reliance_stock/history/{interval}`
 
 - `{interval}`: Required parameter. Valid values are:
