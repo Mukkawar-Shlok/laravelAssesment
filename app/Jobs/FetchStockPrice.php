@@ -40,9 +40,18 @@ class FetchStockPrice implements ShouldQueue
             //logging when job starts
             Log::info("In job");
             //third party api for fetching stock price of reliance
-            $response = Http::get('https://reliance-stock-scrapper.onrender.com/stock-price');
-            //getting price of stock
-            $stockPrice = $response->json('stock_price');
+            $response = Http::withHeaders([
+                'x-rapidapi-host' => 'real-time-finance-data.p.rapidapi.com',
+                'x-rapidapi-key' => env('X_RapidAPI_Key'),
+            ])->get('https://real-time-finance-data.p.rapidapi.com/stock-time-series-source-2?symbol=RELIANCE.NS&period=1D');
+
+            // Real time scrapper
+            // $stockResponse = Http::get('https://reliance-stock-scrapper.onrender.com/stock-price');
+            // $stockPrice = $response->json('stock_price');
+            
+            // Getting the stock price
+            $stockPrice = $response->json('data.price');
+
             //finding record 
             //assuming id 1 is reliance stock
             $stockPriceRecord = StockPrice::find(1);

@@ -103,10 +103,12 @@ Route::get('/reliance/redis/price', function () {
 
 
 //api for getting history from Redis->DB->API
-Route::get('/reliance_stock/history/{interval}/{from_date}/{to_date}', function ($interval,$from_date, $to_date) {
+Route::get('/reliance_stock/history/{interval}', function ($interval) {
     try{
         //creating key with interwal,from and to date
-    $cacheKey = "reliance_stock_history_{$interval}_{$from_date}_{$to_date}";
+        //1 here is stockPriceId for identifying stock
+        //Assuming only one stock exists
+    $cacheKey = "reliance_stock_history_{$interval}_1";
 
     //if key exists in redis
     if (Redis::exists($cacheKey)) {
@@ -136,7 +138,11 @@ Route::get('/reliance_stock/history/{interval}/{from_date}/{to_date}', function 
     }
 
     //now fetching from API
-    $response = Http::get("https://reliance-stock-scrapper.onrender.com/reliance_stock_history/$interval/$from_date/$to_date");
+    $response = Http::withHeaders([
+        'x-rapidapi-host' => 'real-time-finance-data.p.rapidapi.com',
+        'x-rapidapi-key' => env('X_RapidAPI_Key'),
+    ])->get('https://real-time-finance-data.p.rapidapi.com/stock-time-series-source-2?symbol=RELIANCE.NS&period={$interval}');
+
 
     //if api response is sucessful
     if ($response->successful()) {
