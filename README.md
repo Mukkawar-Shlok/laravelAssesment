@@ -25,7 +25,8 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 3. Go inside finance section.
 ![image](https://github.com/user-attachments/assets/3d03f86a-90cf-455b-9c31-4410853b35c7)
 4. Select Real time finance data.
-5. Click on subscribe to test and select the plan.
+5. Click on subscribe to test and select the plan.I am selecting free basic which has 100 requests hard limit.
+![image](https://github.com/user-attachments/assets/4a35e30e-ef49-4457-a6e1-937e15a91f34)
 6. After Selecting you will get back to previous screen and you will be able to see your key and test endpoint option.
 ![Screenshot 2024-07-18 121409](https://github.com/user-attachments/assets/f686e63a-f72f-4332-8f4d-1e2fdf509e98)
 7. Now go to .env and paste it there with key **X_RapidAPI_Key**.
