@@ -16,7 +16,19 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 - Composer
 - Redis
 - MySQL (via XAMPP or standalone)
-- Node.js and npm 
+- Node.js and npm
+- Rapid API KEY
+
+### Generate API Key
+1. Go to (rapidapi.com)[https://rapidapi.com/]
+2. Sign up with google or other sign up options.
+3. Go inside finance section.
+![image](https://github.com/user-attachments/assets/3d03f86a-90cf-455b-9c31-4410853b35c7)
+4. Select Real time finance data.
+5. Click on subscribe to test and select the plan.
+6. After Selecting you will get back to previous screen and you will be able to see your key and test endpoint option.
+![Screenshot 2024-07-18 121409](https://github.com/user-attachments/assets/f686e63a-f72f-4332-8f4d-1e2fdf509e98)
+7. Now go to .env and paste it there with key **X_RapidAPI_Key**.
 
 ### Installation Steps
 1. Clone the repository
@@ -25,7 +37,7 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
 ```
 2. Environment Configuration
     - Copy .env.example to .env.
-    - Update .env with your database and Redis configurations
+    - Update .env with your database, Redis configurations and Rapid Api Key.
 3. Install PHP dependencies
     ```bash
     composer install
