@@ -54,18 +54,25 @@ git clone https://github.com/Mukkawar-Shlok/laravelAssesment.git
 | GET | `/` | Returns the landing page of Laravel to check if Laravel is running correctly. |
 | GET | `/reliance/price` | Fetches data directly from the database (for testing database functionality). |
 | GET | `/reliance/redis/price` | Retrieves Reliance stock price from Redis cache if available, otherwise from the database. |
-| GET | `/reliance_stock/history/{interval}/{from_date}/{to_date}` | Returns historical stock data based on specified parameters. |
+| GET | `/reliance_stock/history/{interval}` | Returns historical stock data based on specified parameters. |
 | GET | `/clear_redis_cache` | Clears the Redis cache. |
 
-### Notes on `/reliance_stock/history/{interval}/{from_date}/{to_date}`
+### Notes on `/reliance_stock/history/{interval}`
 
 - `{interval}`: Required parameter. Valid values are:
-  - 1m, 2m, 5m, 15m, 30m, 60m, 90m (minutes)
-  - 1h (hour)
-  - 1d, 5d (days)
-  - 1wk (week)
-  - 1mo, 3mo (months)
-- `{from_date}` and `{to_date}`: Should be in the format YYYY-MM-DD
+- 1D - 1 day
+- 5D - 5 days
+- 1M - 1 month
+- 3M - 3 month
+- 6M - 6 months
+- YTD - year-to-date
+- 1Y - 1 year
+- 2Y - 2 years
+- 5Y - 5 years
+- 10Y - 10 years
+- MAX - all times
+- Invalid parameter data with 1 month values.
+
 
 This endpoint attempts to retrieve data in the following order:
 1. From Redis cache (if available)
